@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const config = require('../config');
 const verifyToken = require('./verifyToken')
+const path = require('path');
+
 
 
 //Rutan la cual se utiliza para que los usuarios se registren
@@ -18,10 +20,10 @@ router.post('/signup', async (req, res, next) => {
     await user.save();
 
     const token = jwt.sign({id: user._id}, config.secret, {
-        expiresIn: 60 * 60 * 24
+        expiresIn: 60
     })
+    res.redirect('/registration-success.html');
 
-    res.json({message: 'El registro ha sido exitoso', auth: true, token})
 
 })
 
@@ -32,8 +34,6 @@ router.get('/profile', verifyToken, async (req, res, next) => {
     if(!user){
         return res.status(404).send('No se encontro el usuario');
     }
-
-    res.json(user);
 })
 
 // con verifyToken podemos proteger muchas rutas con la misma logica
@@ -59,10 +59,10 @@ router.post('/signin', async(req, res, next) => {
     }
 
     const token = jwt.sign({id: user._id}, config.secret, {
-        expiresIn: 60 * 60 * 24
+        expiresIn: 60
     })
-    res.json({message: 'autenticación satisfactoria', auth: true, token});
+    res.redirect('/profile.html');
 
-})
+});
 
 module.exports = router;

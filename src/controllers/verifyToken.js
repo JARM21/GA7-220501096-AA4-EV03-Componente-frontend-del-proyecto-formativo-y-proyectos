@@ -4,16 +4,20 @@ const config = require('../config');
 
 
 function verifyToken(req, res, next){
-    const token = req.headers['x-access-token'];
+    const token = req.headers['authorization'];
+
     if (!token) {
-        return res.status(401).json({
-            auth: false,
-            message: 'No se proporciono ningún token'
-        });
+        return res.status(403).json({ message: 'Token de sesión no proporcionado.' });
     }
-    const decoded = jwt.verify(token, config.secret);
-    req.userId = decoded.id;
-    next();
+
+    jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
+        return res.status(401).json({ message: 'Token de sesión inválido.' });
+        }
+
+        req.userId = decoded.id; // Almacenar el ID del usuario en el objeto de solicitud para usarlo en otras rutas
+        next();
+    });
 }
 
 module.exports = verifyToken;
