@@ -45,7 +45,6 @@ router.get('/dashboard', verifyToken,(req, res) => {
 
 //Ruta para que los usuarios puedan iniciar sesión
 router.post('/signin', async(req, res, next) => {
-
     const {email, password } = req.body;
     console.log(email, password)
     const user = await User.findOne({email: email});
